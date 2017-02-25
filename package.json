@@ -1,0 +1,16 @@
+{
+  "name": "git-flow-json-commits",
+  "version": "0.0.1",
+  "description": "creates the json expected by git-flow-vis from a git repository",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Teun Duynstee",
+  "license": "Apache 2",
+  "dependencies": {
+    "command-line-args": "^4.0.1",
+    "nodegit": "^0.17.0",
+    "q": "^1.4.1"
+  }
+}
