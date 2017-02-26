@@ -10,6 +10,7 @@
   "license": "Apache 2",
   "dependencies": {
     "command-line-args": "^4.0.1",
+    "git-flow-vis": "^1.2.0",
     "nodegit": "^0.17.0",
     "q": "^1.4.1"
   }
