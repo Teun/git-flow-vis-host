@@ -34,31 +34,39 @@ function getBaseCommitData(repo, options){
                 .then(()=> result);
         });
 }
+function getCommitsFromChild(repo, id, nr){
+    var walker = repo.createRevWalk();
+    walker.sorting(git.Revwalk.SORT.TIME);
+    walker.push(id);
+    return walker.getCommits(nr)
+        .then(commits =>{
+            return commits.map(c => {
+                return {
+                    id: c.sha(),
+                    displayId: c.sha().substr(0,7),
+                    message: c.message(),
+                    authorTimestamp: c.timeMs(),
+                    author:{
+                        name: c.author().name(),
+                        emailAddress: c.author().email()
+                    },
+                    parents: c.parents().map(p => {
+                        return {id: p.tostrS()};
+                    })
+                };
+            });
+        });
+
+}
 function getDataFromBranch(ref, result){
     var promise = new Promise((resolve, reject)=>{
         var branch = {};
         branch.id = ref.name();
         branch.displayId = ref.shorthand();
         branch.latestChangeset = ref.target().tostrS();
-        var repo = ref.owner();
-        var walker = repo.createRevWalk();
-        walker.sorting(git.Revwalk.SORT.TIME);
-        walker.push(ref.target());
-        walker.getCommits(50)
-            .then(commits =>{
-                result.commits.push({values:
-                    commits.map(c => {
-                        return {
-                            id: c.sha(),
-                            displayId: c.sha().substr(0,7),
-                            message: c.message(),
-                            authorTimestamp: c.timeMs(),
-                            parents: c.parents().map(p => {
-                                return {id: p.tostrS()};
-                            })
-                        };
-                    })
-                });
+        getCommitsFromChild(ref.owner(), ref.target(), 20)
+            .then((commits)=>{
+                result.commits.push({values: commits});
                 resolve(branch);
             });
     });
@@ -82,7 +90,14 @@ function getDataFromTag(ref, result){
     });
     return promise;
 }
+function getAncestorsFor(repo, root){
+    return git.Repository.open(repo).then(
+        (repo) => {
+            return getCommitsFromChild(repo, root, 20);
+        });
+}
 
 module.exports = {
-    getBaseCommitData:getBaseCommitData
+    getBaseCommitData:getBaseCommitData,
+    getAncestorsFor: getAncestorsFor
 }

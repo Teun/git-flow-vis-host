@@ -2,8 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
-    <script src="node_modules/git-flow-vis/dist/gitflow-visualize.bundle.js"></script>
-    <link rel="stylesheet" type="text/css" href="node_modules/git-flow-vis/dist/gitflow-visualize.css" />
+    <script src="gfv/gitflow-visualize.bundle.js"></script>
+    <link rel="stylesheet" type="text/css" href="gfv/gitflow-visualize.css" />
 	    <style>
     	.aui-avatar-xsmall .aui-avatar-inner img {
     		max-height: 12px;
@@ -64,11 +64,18 @@
 					done(JSON.parse(xhr.responseText));
 				}
 			}
-			xhr.open("GET", "commits.json")
+			xhr.open("GET", "/commits/")
 			xhr.send(null);
 		}
 		var moreDataCallback = function (from, done) {
-			done(null, from);
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == XMLHttpRequest.DONE) {
+					done(JSON.parse(xhr.responseText), from);
+				}
+			}
+			xhr.open("GET", "/commits/from/" + from);
+			xhr.send(null);
 		};
 		
 		GitFlowVisualize.draw(element,
