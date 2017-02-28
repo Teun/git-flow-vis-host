@@ -1,8 +1,21 @@
 const git = require("nodegit");
+var _cachedRepos = {};
+function getCachedRepo(repo){
+    if(repo in _cachedRepos){
+        return new Promise((res)=>{res( _cachedRepos[repo]);});
+    }else{
+        return git.Repository.open(repo)
+            .then(r=>{
+                _cachedRepos[repo] = r;
+                return r;
+            });
+    }
 
+
+}
 function getBaseCommitData(repo, options){
     var result = {branches:{values:[]}, tags:{values:[]}, commits:[]};
-    return git.Repository.open(repo).then(
+    return getCachedRepo(repo).then(
         (repo) => {
             return repo.getReferences(git.Reference.TYPE.OID)
                 .then((refs)=>{
@@ -15,7 +28,12 @@ function getBaseCommitData(repo, options){
                         Promise.all(all)
                             .then((branches)=> {
                                 result.branches.values = branches;
-                                res(branches);
+                                var ids = branches.map((b)=> b.latestChangeset);
+                                getCommitsFromChildren(repo, ids, 200)
+                                    .then((commits)=>{
+                                        result.commits.push({values:commits});
+                                        res(branches);
+                                    });
                             });
                     }));
                     promises.push(new Promise((res)=>{
@@ -34,10 +52,10 @@ function getBaseCommitData(repo, options){
                 .then(()=> result);
         });
 }
-function getCommitsFromChild(repo, id, nr){
+function getCommitsFromChildren(repo, ids, nr){
     var walker = repo.createRevWalk();
     walker.sorting(git.Revwalk.SORT.TIME);
-    walker.push(id);
+    ids.forEach((id)=>{walker.push(id);});
     return walker.getCommits(nr)
         .then(commits =>{
             return commits.map(c => {
@@ -64,11 +82,7 @@ function getDataFromBranch(ref, result){
         branch.id = ref.name();
         branch.displayId = ref.shorthand();
         branch.latestChangeset = ref.target().tostrS();
-        getCommitsFromChild(ref.owner(), ref.target(), 20)
-            .then((commits)=>{
-                result.commits.push({values: commits});
-                resolve(branch);
-            });
+        resolve(branch);
     });
     return promise;
 }
@@ -91,9 +105,9 @@ function getDataFromTag(ref, result){
     return promise;
 }
 function getAncestorsFor(repo, root){
-    return git.Repository.open(repo).then(
+    return getCachedRepo(repo).then(
         (repo) => {
-            return getCommitsFromChild(repo, root, 20);
+            return getCommitsFromChildren(repo, [root], 20);
         });
 }
 
