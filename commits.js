@@ -82,6 +82,13 @@ function getDataFromBranch(ref, result){
         branch.id = ref.name();
         branch.displayId = ref.shorthand();
         branch.latestChangeset = ref.target().tostrS();
+        if(ref.isRemote()){
+            var parts = branch.id.split('/');
+            if(parts[1] === "remotes"){
+                branch.displayId = parts.slice(3).join('/');
+                branch.id = "refs/heads/" + branch.displayId;
+            }
+        }
         resolve(branch);
     });
     return promise;
@@ -98,6 +105,7 @@ function getDataFromTag(ref, result){
                 resolve(tag);
             })
             .catch((err)=>{
+                console.log("ERROR", err);
                 resolve(null);
             });
         
