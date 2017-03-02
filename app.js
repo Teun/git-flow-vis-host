@@ -9,7 +9,7 @@ const optionDefinitions = [
 ];
 const options = commandLineArgs(optionDefinitions);
 
-commits.getBaseCommitData(options.repo, {remotes:options.remotes})
+commits.getBaseCommitData({path: options.repo, username: options.username, password: options.password}, {remotes:options.remotes})
     .then((result)=>{
         console.log(JSON.stringify(result));
     });

@@ -1,7 +1,7 @@
 const git = require("nodegit");
 var _cachedRepos = {};
 var _lastFetch = {};
-function getCachedRepo(repo){
+function getCachedRepo(repo, options){
     var promise;
     if(repo in _cachedRepos){
         promise = new Promise((res)=>{res( _cachedRepos[repo]);});
@@ -16,7 +16,14 @@ function getCachedRepo(repo){
         promise.then((r)=>{
             _lastFetch[repo] = Date.now();
             console.log("fetching");
-            return r.fetchAll();
+            return r.fetchAll({callbacks:{
+                credentials: function() {
+                    return git.Cred.userpassPlaintextNew(options.username, options.password)
+                }
+            }})
+            .catch((e)=>{
+                console.log(e);
+            });
         });
     }
     return promise;
@@ -25,7 +32,7 @@ function getCachedRepo(repo){
 }
 function getBaseCommitData(repo, options){
     var result = {branches:{values:[]}, tags:{values:[]}, commits:[]};
-    return getCachedRepo(repo).then(
+    return getCachedRepo(repo.path, {username:repo.username, password: repo.password}).then(
         (repo) => {
             return repo.getReferences(git.Reference.TYPE.OID)
                 .then((refs)=>{
@@ -123,7 +130,7 @@ function getDataFromTag(ref, result){
     return promise;
 }
 function getAncestorsFor(repo, root){
-    return getCachedRepo(repo).then(
+    return getCachedRepo(repo.path, {username:repo.username, password: repo.password}).then(
         (repo) => {
             return getCommitsFromChildren(repo, [root], 20);
         });

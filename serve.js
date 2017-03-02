@@ -4,7 +4,9 @@ const commits = require('./commits');
  
 const optionDefinitions = [
   { name: 'repo', alias: 'r', type: String, defaultOption: true },
-  { name: 'remotes', type:Boolean, defaultValue: false}
+  { name: 'remotes', type:Boolean, defaultValue: false},
+  { name: 'username', alias: 'u', type: String},
+  { name: 'password', alias: 'p', type: String}
 ];
 const options = commandLineArgs(optionDefinitions);
 
@@ -17,7 +19,7 @@ app.get('/', function(req, res){
     res.sendFile('chart.html', {root: __dirname});
 });
 app.get('/commits/', function(req, res){
-    commits.getBaseCommitData(options.repo, {remotes:options.remotes})
+    commits.getBaseCommitData({path: options.repo, username: options.username, password: options.password}, {remotes:options.remotes})
         .then((result)=>{
             res.type('json');
             res.write(JSON.stringify(result));
@@ -28,7 +30,7 @@ app.get('/commits/', function(req, res){
 app.get('/commits/from/:commit', function (req, res) {
     var params = req.params;
     var root = params.commit;
-    commits.getAncestorsFor(options.repo, root)
+    commits.getAncestorsFor({path: options.repo, username: options.username, password: options.password}, root)
         .then((result)=>{
             res.type('json');
             res.write(JSON.stringify({values:result}));
