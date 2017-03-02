@@ -1,15 +1,25 @@
 const git = require("nodegit");
 var _cachedRepos = {};
+var _lastFetch = {};
 function getCachedRepo(repo){
+    var promise;
     if(repo in _cachedRepos){
-        return new Promise((res)=>{res( _cachedRepos[repo]);});
+        promise = new Promise((res)=>{res( _cachedRepos[repo]);});
     }else{
-        return git.Repository.open(repo)
+        promise = git.Repository.open(repo)
             .then(r=>{
                 _cachedRepos[repo] = r;
                 return r;
             });
     }
+    if(!_lastFetch[repo] || _lastFetch[repo]<(Date.now()-10000)){
+        promise.then((r)=>{
+            _lastFetch[repo] = Date.now();
+            console.log("fetching");
+            return r.fetchAll();
+        });
+    }
+    return promise;
 
 
 }
@@ -105,7 +115,7 @@ function getDataFromTag(ref, result){
                 resolve(tag);
             })
             .catch((err)=>{
-                console.log("ERROR", err);
+                console.log("ERROR", "finding commit for tag " + tag.displayId, err);
                 resolve(null);
             });
         
