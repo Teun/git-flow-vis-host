@@ -64,7 +64,7 @@
 					done(JSON.parse(xhr.responseText));
 				}
 			}
-			xhr.open("GET", "/commits/")
+			xhr.open("GET", "{{& mainDataUrl}}")
 			xhr.send(null);
 		}
 		var moreDataCallback = function (from, done) {
@@ -81,10 +81,14 @@
 		GitFlowVisualize.draw(element,
 						{
 							dataCallback: dataCallback,
-							moreDataCallback: moreDataCallback,
-							featurePrefix: "refs/heads/",
-							releasePrefix: "refs/heads/candidate",
-							releaseTagPattern: /refs\/tags\/release\/\d+/
+							{{#moreDataCallback}}moreDataCallback: moreDataCallback{{/moreDataCallback}},
+							{{#masterRef}}masterRef: "{{& masterRef}}",{{/masterRef}}
+							{{#developRef}}developRef: "{{& developRef}}",{{/developRef}}
+							{{#featurePrefix}}featurePrefix: "{{& featurePrefix}}",{{/featurePrefix}}
+							{{#releasePrefix}}releasePrefix: "{{& releasePrefix}}",{{/releasePrefix}}
+							{{#hotfixPrefix}}hotfixPrefix: "{{& hotfixPrefix}}",{{/hotfixPrefix}}
+							{{#releaseZonePattern}}releaseZonePattern: /{{& releaseZonePattern}}/,{{/releaseZonePattern}}
+							{{#releaseTagPattern}}releaseTagPattern: /{{& releaseTagPattern}}/,{{/releaseTagPattern}}
 						});
 						
     </script>

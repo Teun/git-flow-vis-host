@@ -10,7 +10,7 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/serve.js",
             "cwd": "${workspaceRoot}",
-            "args": ["--repo", "../Snappet"]
+            "args": ["--repo", "../Snappet", "--remotes", "--featurePrefix=refs/heads/feature/", "--releaseZonePattern=^refs\\/tags\\/release-\\d+(\\.\\d+)+"]
         },
         {
             "type": "node",

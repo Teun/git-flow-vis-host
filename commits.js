@@ -12,7 +12,7 @@ function getCachedRepo(repo, options){
                 return r;
             });
     }
-    if(!_lastFetch[repo] || _lastFetch[repo]<(Date.now()-10000)){
+    if(options.username && (!_lastFetch[repo] || _lastFetch[repo]<(Date.now()-10000))){
         promise.then((r)=>{
             _lastFetch[repo] = Date.now();
             console.log("fetching");

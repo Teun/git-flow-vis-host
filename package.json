@@ -12,7 +12,7 @@
     "command-line-args": "^4.0.1",
     "express": "^4.14.1",
     "git-flow-vis": "github:teun/git-flow-vis#develop",
-    "nodegit": "^0.17.0",
-    "q": "^1.4.1"
+    "mustache-express": "^1.2.4",
+    "nodegit": "^0.17.0"
   }
 }
