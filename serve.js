@@ -16,6 +16,7 @@ const optionDefinitions = [
   { name: 'hotfixPrefix', type: String},
   { name: 'releaseZonePattern', type: String},
   { name: 'releaseTagPattern', type: String},
+  { name: 'commitUrlTemplate', type: String},
 ];
 const options = commandLineArgs(optionDefinitions);
 

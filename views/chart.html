@@ -77,6 +77,9 @@
 			xhr.open("GET", "/commits/from/" + from);
 			xhr.send(null);
 		};
+		var commitUrl = function(commit){
+			return "{{& commitUrlTemplate}}".replace("#sha#", commit.id);
+		}
 		
 		GitFlowVisualize.draw(element,
 						{
@@ -89,6 +92,8 @@
 							{{#hotfixPrefix}}hotfixPrefix: "{{& hotfixPrefix}}",{{/hotfixPrefix}}
 							{{#releaseZonePattern}}releaseZonePattern: /{{& releaseZonePattern}}/,{{/releaseZonePattern}}
 							{{#releaseTagPattern}}releaseTagPattern: /{{& releaseTagPattern}}/,{{/releaseTagPattern}}
+							{{#releaseTagPattern}}releaseTagPattern: /{{& releaseTagPattern}}/,{{/releaseTagPattern}}
+							{{#commitUrlTemplate}}createCommitUrl: commitUrl,{{/commitUrlTemplate}}
 						});
 						
     </script>
