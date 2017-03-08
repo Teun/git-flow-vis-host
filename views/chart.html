@@ -62,9 +62,20 @@
 			xhr.onreadystatechange = function() {
 				if (xhr.readyState == XMLHttpRequest.DONE) {
 					done(JSON.parse(xhr.responseText));
+					setInterval(updateBrancheTips, 30000);
 				}
 			}
 			xhr.open("GET", "{{& mainDataUrl}}")
+			xhr.send(null);
+		}
+		var updateBrancheTips = function(){
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == XMLHttpRequest.DONE) {
+					GitFlowVisualize.branches.setChanged(JSON.parse(xhr.responseText));
+				}
+			}
+			xhr.open("GET", "/branches/");
 			xhr.send(null);
 		}
 		var moreDataCallback = function (from, done) {

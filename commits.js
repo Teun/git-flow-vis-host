@@ -41,7 +41,7 @@ function getBaseCommitData(repo, options){
                         var branches = options.remotes ?
                              refs.filter(ref=>ref.isRemote()) :
                              refs.filter(ref=>ref.isBranch());
-                        var all = branches.map((b)=> getDataFromBranch(b, result));
+                        var all = branches.map((b)=> getDataFromBranch(b));
                         Promise.all(all)
                             .then((branches)=> {
                                 result.branches.values = branches;
@@ -69,6 +69,19 @@ function getBaseCommitData(repo, options){
                 .then(()=> result);
         });
 }
+function getAllBranchTips(repo, options){
+    return getCachedRepo(repo.path, {username:repo.username, password: repo.password}).then(
+        (repo) => {
+            return repo.getReferences(git.Reference.TYPE.OID)
+                .then((refs)=>{
+                    var branches = options.remotes ?
+                            refs.filter(ref=>ref.isRemote()) :
+                            refs.filter(ref=>ref.isBranch());
+                    var all = branches.map((b)=> getDataFromBranch(b));
+                    return Promise.all(all);
+                });
+        });
+}
 function getCommitsFromChildren(repo, ids, nr){
     var walker = repo.createRevWalk();
     walker.sorting(git.Revwalk.SORT.TIME);
@@ -93,7 +106,7 @@ function getCommitsFromChildren(repo, ids, nr){
         });
 
 }
-function getDataFromBranch(ref, result){
+function getDataFromBranch(ref){
     var promise = new Promise((resolve, reject)=>{
         var branch = {};
         branch.id = ref.name();
@@ -138,5 +151,6 @@ function getAncestorsFor(repo, root){
 
 module.exports = {
     getBaseCommitData:getBaseCommitData,
-    getAncestorsFor: getAncestorsFor
+    getAncestorsFor: getAncestorsFor,
+    getBranchTips: getAllBranchTips
 }

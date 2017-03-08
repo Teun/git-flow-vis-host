@@ -42,7 +42,15 @@ app.get('/commits/', function(req, res){
             res.write(JSON.stringify(result));
             res.end();
         });
-
+})
+app.get('/branches/', function(req, res){
+    commits.getBranchTips({path: options.repo, username: options.username, password: options.password}, {remotes:options.remotes})
+        .then((branches)=>{
+            var result = {values:branches};
+            res.type('json');
+            res.write(JSON.stringify(result));
+            res.end();
+        });
 })
 app.get('/commits/from/:commit', function (req, res) {
     var params = req.params;
