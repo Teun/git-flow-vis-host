@@ -145,7 +145,7 @@ function getDataFromTag(ref, result){
 function getAncestorsFor(repo, root){
     return getCachedRepo(repo.path, {username:repo.username, password: repo.password}).then(
         (repo) => {
-            return getCommitsFromChildren(repo, [root], 20);
+            return getCommitsFromChildren(repo, [root], 5);
         });
 }
 

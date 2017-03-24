@@ -1,17 +1,17 @@
 {
   "name": "git-flow-json-commits",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "creates the json expected by git-flow-vis from a git repository",
-  "main": "app.js",
+  "main": "serve.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Teun Duynstee",
-  "license": "Apache 2",
+  "license": "GPL-3.0",
   "dependencies": {
     "command-line-args": "^4.0.1",
     "express": "^4.14.1",
-    "git-flow-vis": "github:teun/git-flow-vis#feature/32-live-additions",
+    "git-flow-vis": "github:teun/git-flow-vis#develop",
     "mustache-express": "^1.2.4",
     "nodegit": "^0.17.0"
   }
