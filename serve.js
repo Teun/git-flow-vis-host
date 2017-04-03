@@ -18,25 +18,12 @@ along with git-flow-json-commits. If not, see <http://www.gnu.org/licenses/>.
 
 var express = require('express')
 var mustacheExpress = require('mustache-express');
-const commandLineArgs = require('command-line-args')
 const commits = require('./commits');
  
-const optionDefinitions = [
-  { name: 'repo', alias: 'r', type: String, defaultOption: true },
-  { name: 'remotes', type:Boolean, defaultValue: false},
+const options = require('./config.js')([
   { name: 'username', alias: 'u', type: String},
   { name: 'password', alias: 'p', type: String},
-
-  { name: 'masterRef', type: String},
-  { name: 'developRef', type: String},
-  { name: 'featurePrefix', type: String},
-  { name: 'releasePrefix', type: String},
-  { name: 'hotfixPrefix', type: String},
-  { name: 'releaseZonePattern', type: String},
-  { name: 'releaseTagPattern', type: String},
-  { name: 'commitUrlTemplate', type: String},
-];
-const options = commandLineArgs(optionDefinitions);
+]);
 
 
 var app = express()

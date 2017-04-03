@@ -91,10 +91,23 @@
 		var commitUrl = function(commit){
 			return "{{& commitUrlTemplate}}".replace("#sha#", commit.id);
 		}
-		
+		var log = function(level, msg){
+			switch (level) {
+				case "ERROR":
+					console.error(msg);
+					break;
+				case "WARN":
+					console.warn(msg);
+					break;
+				default:
+					console.log(level + ": ", msg);
+			}
+		}
+
 		GitFlowVisualize.draw(element,
 						{
 							dataCallback: dataCallback,
+							log: log,
 							{{#moreDataCallback}}moreDataCallback: moreDataCallback{{/moreDataCallback}},
 							{{#masterRef}}masterRef: "{{& masterRef}}",{{/masterRef}}
 							{{#developRef}}developRef: "{{& developRef}}",{{/developRef}}
